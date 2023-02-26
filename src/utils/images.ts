@@ -6,4 +6,11 @@ export const images = {
   like: require('../assets/images/like.png'),
   favorite: require('../assets/images/ic_favorites.png'),
   share: require('../assets/images/noun_Share_3304093.png'),
+  fullScreen: require('../assets/images/fullscreen.png'),
+  videoPlay: require('../assets/images/ic_play.png'),
+  videoPause: require('../assets/images/video-pause-button.png'),
+  videoForward: require('../assets/images/Page-1_2.png'),
+  videoBack: require('../assets/images/Page-1.png'),
+  expand: require('../assets/images/ic_expand.png'),
+  menu: require('../assets/images/menu.png'),
 };

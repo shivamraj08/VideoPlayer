@@ -4,6 +4,7 @@ import {normalize, screenWidth, vw} from '../utils/dimension';
 import {images} from '../utils/images';
 import {COLORS} from '../utils/colors';
 import {useNavigation} from '@react-navigation/native';
+import {STRINGS} from '../utils/strings';
 interface customCardType {
   description: any;
   title: any;
@@ -11,44 +12,28 @@ interface customCardType {
   thumb: any;
   subtitle: any;
   time: any;
+  onPress: any;
 }
 
 function CustomCard(props: customCardType) {
-  const {description, title, sources, thumb, subtitle, time} = props;
+  const {description, title, sources, thumb, subtitle, time, onPress} = props;
   const navigation = useNavigation<any>();
-  //   const onVideoPress = () => {
-  //     console.log('first');
-  //     navigation.navigate('VideoPlayscreen', {
-  //       title: title,
-  //       time: time,
-  //     });
-  //   };
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        activeOpacity={0.7}
-        onPress={() => {
-          navigation.navigate('VideoPlayscreen', {
-            description: description,
-            title: title,
-            sources: sources,
-            thumb: thumb,
-            subtitle: subtitle,
-            time: time,
-          });
-        }}>
+      <TouchableOpacity activeOpacity={0.7} onPress={onPress}>
         <Image
           source={{uri: thumb}}
           style={styles.videoImage}
           resizeMode="cover"
         />
-
+        <Image source={images.videoPlay} style={styles.playImage} />
         <View style={styles.videoDescriptionView}>
           <Text style={styles.titleTextstyle}>{title}</Text>
           <View style={styles.numberOfViews}>
-            <Text>{'94K Views '}</Text>
+            <Text>{STRINGS.LABEL.K_VIEWS}</Text>
             <Text>{' · '}</Text>
-            <Text>{' 3 days ago'}</Text>
+            <Text>{STRINGS.LABEL.DAYS_AGO}</Text>
           </View>
           <View style={styles.userChannelView}>
             <Image source={images.womenImage} style={styles.userImageStyle} />
@@ -102,5 +87,10 @@ const styles = StyleSheet.create({
     color: COLORS.GREY,
     marginLeft: normalize(15),
     marginTop: normalize(8),
+  },
+  playImage: {
+    position: 'absolute',
+    alignSelf: 'center',
+    marginTop: normalize(80),
   },
 });

@@ -14,28 +14,69 @@ import {images} from '../../utils/images';
 import {dummyImages} from '../../utils/imageData';
 import CustomCard from '../../component/customCard';
 import {mediaJSON} from '../../utils/localData';
+import CustomControls from '../../component/customControls';
+import {STRINGS} from '../../utils/strings';
+import LinearGradient from 'react-native-linear-gradient';
+import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
+import Share from 'react-native-share';
+const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
+function VideoPlayScreen({route}: any) {
+  const {item} = route?.params;
+  const [changeSource, setChangeSource] = useState(item.sources[0]);
+  const [changeTitle, setchangeTitle] = useState(item.title);
+  const [changeDescription, setchangeDescription] = useState(item.description);
+  const [loaded, setLoaded] = useState(false);
+  let dataList = mediaJSON
+    .filter(item => item.sources[0] !== changeSource)
+    .slice(0, 5);
 
-export default function VideoPlayScreen(route: any) {
-  console.log('48384539458954', route.params);
-  const {title, time} = route;
-  console.log('params', title, time);
-  const data = dummyImages;
+  const myCustomShare = async () => {
+    const shareOptions = {
+      message:
+        "Order your next meal from FoodFinder App. I've already ordered more than 10 meals on it.",
+      // url: files.appLogo,
+      // urls: [files.image1, files.image2]
+    };
 
+    try {
+      const ShareResponse = await Share.open(shareOptions);
+    } catch (error) {}
+  };
   const handleMapData = () => {
-    return dummyImages.map(item => {
+    return dummyImages.map((item, index) => {
       return (
-        <TouchableOpacity activeOpacity={0.7} style={{alignItems: 'center'}}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={item?.text == 'Share' ? myCustomShare : null}
+          key={index}
+          style={styles.reactionContainer}>
           <Image source={item.image} style={styles.likeImageStyle} />
           <Text style={styles.iconTextstyle}>{item.text}</Text>
         </TouchableOpacity>
       );
     });
   };
+
+  const onKeyExtract = (item: any) => {
+    return item.id.toString();
+  };
+
   const onrender = ({item}: any) => {
-    console.log('-->', item);
+    const handleOnPress = () => {
+      setChangeSource(item.sources[0]);
+      setchangeTitle(item.title);
+      setchangeDescription(item.description);
+    };
     return (
-      <View style={{margin: normalize(10)}}>
+      // {loaded?null:()}
+      <View style={styles.renderContainer}>
+        {/* <ShimmerPlaceholder
+          style={{
+            height: normalize(100),
+            width: normalize(100),
+          }}></ShimmerPlaceholder> */}
         <CustomCard
+          onPress={handleOnPress}
           title={item.title}
           description={item.description}
           sources={item.sources}
@@ -48,53 +89,72 @@ export default function VideoPlayScreen(route: any) {
   };
 
   const detailsComponent = () => {
-    console.log('kfhilhfereiriheriu');
     return (
       <>
         <View style={styles.headerView}>
-          <Text style={styles.headerTextstyle}>
-            {'How to play PUBG Mobile on emulator'}
-          </Text>
+          <Text style={styles.headerTextstyle}>{changeTitle}</Text>
           <View style={styles.numberOfView}>
-            <Text style={styles.viewsTxt}>{'94k views'}</Text>
-            <Text style={styles.dayTextstyle}>{'3 days ago'}</Text>
+            <Text style={styles.noViewText}>{STRINGS.LABEL.K_VIEWS}</Text>
+            <Text style={styles.dayTextstyle}>{STRINGS.LABEL.DAYS_AGO}</Text>
           </View>
-          <Text style={{marginTop: normalize(10), fontSize: 14}}>
-            {
-              'Big Buck Bunny tells the story of a giant rabbit with a heart bigger than himself. When one sunny day three rodents rudely harass him'
-            }
+          <Text style={styles.descriptionTextstyle} numberOfLines={3}>
+            {changeDescription}
           </Text>
         </View>
         <View style={styles.mapViewData}>{handleMapData()}</View>
         <View style={styles.channelDetailsView}>
           <Image style={styles.userChannelImage} source={images.womenImage} />
-          <View style={{marginRight: normalize(80)}}>
+          <View style={styles.channelContainer}>
             <Text style={styles.channelNameTextstyle}>
-              {'Technical Guruji'}
+              {STRINGS.LABEL.TECHNICAL_GURUJI}
             </Text>
-            <Text style={styles.subcribersTextstyle}>{'15k Subcribers'}</Text>
+            <Text style={styles.subcribersTextstyle}>
+              {STRINGS.LABEL.K_SUBCRIBERS}
+            </Text>
           </View>
           <TouchableOpacity style={styles.subscribeTouchable}>
-            <Text style={styles.buttonSubscribe}>{'Subscribe'}</Text>
+            <Text style={styles.buttonSubscribe}>{STRINGS.LABEL.SUBCRIBE}</Text>
           </TouchableOpacity>
+        </View>
+        <View style={styles.commentsView}>
+          <View style={styles.commentsInner}>
+            {/* <View style={styles.noOfComments}> */}
+            <Text style={styles.commentsText}>{STRINGS.LABEL.COMMENTS}</Text>
+            <Text style={{marginRight: 220}}>{STRINGS.NUMBER[32]}</Text>
+            {/* </View> */}
+            <Image source={images.expand} />
+          </View>
+          <View style={styles.userCommentView}>
+            <Image style={styles.commentsUser} source={images.womenImage} />
+            <View style={styles.descriptionComment}>
+              <Text style={styles.commentUserText} numberOfLines={2}>
+                {STRINGS.LABEL.COMMENTS_TEXT}
+              </Text>
+            </View>
+          </View>
         </View>
       </>
     );
   };
-  return (
-    <View style={{flex: 1}}>
-      <View style={styles.videoContainer}></View>
 
+  return (
+    <View style={styles.container}>
+      <CustomControls source={changeSource} />
       <FlatList
-        data={mediaJSON}
+        data={dataList}
         renderItem={onrender}
         ListHeaderComponent={detailsComponent}
+        keyExtractor={onKeyExtract}
       />
     </View>
   );
 }
 
+export default React.memo(VideoPlayScreen);
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   numberOfViews: {
     flexDirection: 'row',
     marginTop: normalize(6),
@@ -106,7 +166,7 @@ const styles = StyleSheet.create({
     height: normalize(25),
     width: normalize(25),
     resizeMode: 'cover',
-    tintColor: '#606060',
+    tintColor: COLORS.GREY,
   },
   likeContainer: {
     flexDirection: 'row',
@@ -115,30 +175,45 @@ const styles = StyleSheet.create({
     width: '80%',
     margin: normalize(30),
   },
-  videoContainer: {
-    width: screenWidth,
-    height: normalize(200),
-    borderWidth: 1,
+  descriptionTextstyle: {
+    marginTop: normalize(10),
+    fontSize: 14,
+  },
+  renderContainer: {
+    flex: 1,
+    width: '90%',
     alignSelf: 'center',
+    backgroundColor: COLORS.WHITE,
+    margin: normalize(10),
+    borderRadius: 10,
+    flexDirection: 'row',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.29,
+    shadowRadius: 4.65,
+    elevation: 3,
+  },
+  channelContainer: {
+    marginRight: normalize(80),
   },
   headerView: {
     marginHorizontal: normalize(20),
     marginTop: normalize(20),
-    // flexDirection: 'row',
   },
   headerTextstyle: {
     fontSize: 16,
-    // fontFamily: 'Poppins-Bold',
+    fontFamily: 'Poppins-Bold',
     fontWeight: '700',
   },
   numberOfView: {
     flexDirection: 'row',
-    // marginHorizontal: normalize(20),
     marginTop: normalize(20),
   },
-  viewsTxt: {
+  noViewText: {
     fontSize: 14,
-    // fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Regular',
     color: COLORS.BLACK,
   },
   dayTextstyle: {
@@ -147,7 +222,7 @@ const styles = StyleSheet.create({
   iconTextstyle: {
     fontSize: normalize(12),
     marginTop: normalize(5),
-    color: '#606060',
+    color: COLORS.GREY,
   },
   userImageStyle: {
     height: vw(30),
@@ -198,5 +273,55 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.2,
     height: vh(90),
     marginTop: vh(20),
+  },
+  commentsView: {
+    paddingHorizontal: normalize(20),
+    paddingVertical: normalize(14),
+    borderBottomWidth: 0.5,
+    borderBottomColor: COLORS.GREY,
+  },
+  commentsInner: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: normalize(30),
+  },
+  noOfComments: {
+    flexDirection: 'row',
+    // justifyContent: 'space-between',
+    // margin: normalize(15),
+  },
+  commentsTxt: {
+    marginLeft: normalize(20),
+  },
+  userCommentView: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: normalize(10),
+  },
+  commentsUser: {
+    height: normalize(30),
+    width: normalize(30),
+    borderRadius: normalize(25),
+  },
+  descriptionComment: {
+    flexDirection: 'row',
+    width: 0,
+    flex: 1,
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    marginHorizontal: normalize(14),
+  },
+  commentUserText: {
+    color: COLORS.GREY,
+    fontSize: 14,
+  },
+  commentsText: {
+    fontSize: normalize(14),
+    color: COLORS.BLACK,
+    fontWeight: '700',
+  },
+  reactionContainer: {
+    alignItems: 'center',
   },
 });

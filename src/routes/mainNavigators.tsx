@@ -4,6 +4,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import MainScreen from '../screens/mainScreen';
 import TopTabNavigator from './tobTab';
 import VideoPlayScreen from '../screens/videoPlayscreen';
+import CustomControls from '../component/customControls';
 
 export default function AppNavigator() {
   const Stack = createNativeStackNavigator();
@@ -17,7 +18,12 @@ export default function AppNavigator() {
           options={{headerShown: false}}
         />
         <Stack.Screen name="TopTab" component={TopTabNavigator} />
-        <Stack.Screen name="VideoPlayscreen" component={VideoPlayScreen} />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="VideoPlayscreen"
+          component={VideoPlayScreen}
+        />
+        <Stack.Screen name="CustomControl" component={CustomControls} />
       </Stack.Navigator>
     </NavigationContainer>
   );
