@@ -2,14 +2,20 @@ import React from 'react';
 import Slider from '@react-native-community/slider';
 import {View, Text, StyleSheet} from 'react-native';
 import {normalize} from '../utils/dimension';
+import {COLORS} from '../utils/colors';
 
+/**
+ *
+ * @param props
+ * @returns handle progress of the video current time
+ */
 const ProgressBar = (props: {
-  currentTime: any;
-  duration: any;
-  onSlideCapture: any;
+  currentTime?: any;
+  duration?: any;
+  onSlideCapture?: any;
   onSlideStart?: any;
-  onSlideComplete: any;
-  containerStyle: any;
+  onSlideComplete?: any;
+  containerStyle?: any;
 }) => {
   const {
     currentTime,
@@ -45,9 +51,8 @@ const ProgressBar = (props: {
         onValueChange={handleOnSlide}
         onSlidingStart={onSlideStart}
         onSlidingComplete={onSlideComplete}
-        minimumTrackTintColor={'#34dbeb'}
-        maximumTrackTintColor={'#FFFFFF'}
-        // thumbTintColor={'#F44336'}
+        minimumTrackTintColor={COLORS.LIGHT_AQUA}
+        maximumTrackTintColor={COLORS.WHITE}
       />
       <View style={styles.timeWrapper}>
         <Text style={styles.timeLeft}>
@@ -65,6 +70,7 @@ const styles = StyleSheet.create({
     width: '90%',
     position: 'absolute',
     alignSelf: 'center',
+    zIndex: 1,
   },
   timeWrapper: {
     flexDirection: 'row',
@@ -73,7 +79,7 @@ const styles = StyleSheet.create({
   timeLeft: {
     flex: 1,
     fontSize: 16,
-    color: '#FFFFFF',
+    color: COLORS.WHITE,
   },
 });
 

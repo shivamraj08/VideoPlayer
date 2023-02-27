@@ -4,4 +4,6 @@ export const COLORS = {
   BLACK: '#111111',
   LIGHT_BLACK: '#1f2021',
   GREY: '#606060',
+  LIGHT_AQUA: '#34dbeb',
+  POWDER_BLUE: '#e8f0f8',
 };

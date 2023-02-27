@@ -11,13 +11,11 @@ interface customCardType {
   sources: any;
   thumb: any;
   subtitle: any;
-  time: any;
   onPress: any;
 }
 
 function CustomCard(props: customCardType) {
-  const {description, title, sources, thumb, subtitle, time, onPress} = props;
-  const navigation = useNavigation<any>();
+  const {title, thumb, subtitle, onPress} = props;
 
   return (
     <View style={styles.container}>
@@ -27,12 +25,15 @@ function CustomCard(props: customCardType) {
           style={styles.videoImage}
           resizeMode="cover"
         />
+        <View style={styles.durationVideoView}>
+          <Text style={styles.timeText}>{STRINGS.NUMBER.DURATION}</Text>
+        </View>
         <Image source={images.videoPlay} style={styles.playImage} />
         <View style={styles.videoDescriptionView}>
           <Text style={styles.titleTextstyle}>{title}</Text>
-          <View style={styles.numberOfViews}>
+          <View style={styles.numberOfViewsContainer}>
             <Text>{STRINGS.LABEL.K_VIEWS}</Text>
-            <Text>{' · '}</Text>
+            <Text>{'·'}</Text>
             <Text>{STRINGS.LABEL.DAYS_AGO}</Text>
           </View>
           <View style={styles.userChannelView}>
@@ -64,11 +65,11 @@ const styles = StyleSheet.create({
     fontSize: normalize(16),
     fontWeight: '600',
   },
-  numberOfViews: {
+  numberOfViewsContainer: {
     flexDirection: 'row',
     marginTop: normalize(6),
-    width: '55%',
-    justifyContent: 'space-between',
+    width: '49%',
+    justifyContent: 'space-around',
   },
   userChannelView: {
     flexDirection: 'row',
@@ -92,5 +93,20 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     marginTop: normalize(80),
+  },
+  durationVideoView: {
+    position: 'absolute',
+    backgroundColor: '#161616',
+    padding: normalize(6),
+    width: normalize(60),
+    height: normalize(30),
+    alignItems: 'center',
+    opacity: 0.6,
+    borderRadius: normalize(7),
+    top: screenWidth / 2.5,
+    right: normalize(5),
+  },
+  timeText: {
+    color: COLORS.WHITE,
   },
 });

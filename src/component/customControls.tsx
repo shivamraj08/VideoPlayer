@@ -1,7 +1,7 @@
-import {View, Text, TouchableOpacity, Image, StatusBar} from 'react-native';
+import {View, TouchableOpacity, Image, Text} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Video from 'react-native-video';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, StatusBar} from 'react-native';
 import {normalize, screenHeight, screenWidth} from '../utils/dimension';
 import {Dimensions} from 'react-native';
 import {images} from '../utils/images';
@@ -9,7 +9,7 @@ import PlayerControls from './playerControls';
 import ProgressBar from './progressBar';
 import Orientation from 'react-native-orientation-locker';
 import {useNavigation} from '@react-navigation/native';
-import {VideoShimmer} from './shimmering';
+import {VideoPlayerShimmer} from './shimmering';
 
 interface customVideoType {
   source: any;
@@ -30,18 +30,18 @@ const CustomControls = (props: customVideoType) => {
   const [videoStyle, setVideoStyle] = useState<any>(styles.initialVideoStyle);
 
   useEffect(() => {
-    setTimeout(() => setfetching(false), 3000);
+    setTimeout(() => setfetching(false), 2000);
   }, []);
 
   useEffect(() => {
     Orientation.getOrientation(orientation => {
-      console.log(orientation.includes('LANDSCAPE'));
       if (orientation.includes('LANDSCAPE')) {
         Orientation.lockToPortrait();
       }
     });
     Orientation.addLockListener(orientation => setOrientation(orientation));
     return () => {
+      Orientation.unlockAllOrientations();
       Orientation.removeLockListener(handleFullScreen);
     };
   }, []);
@@ -49,18 +49,10 @@ const CustomControls = (props: customVideoType) => {
   const handleFullScreen = () => {
     if (currOrientation.includes('LANDSCAPE')) {
       Orientation.lockToPortrait();
-      setVideoStyle({
-        height: screenHeight / 3.2,
-        width: '100%',
-      });
+      setVideoStyle(styles.initialVideoStyle);
     } else {
       Orientation.lockToLandscape();
-      setVideoStyle({
-        top: 0,
-        height: screenWidth,
-        width: screenHeight,
-        paddingTop: normalize(20),
-      });
+      setVideoStyle(styles.fullScreenVideoStyle);
     }
   };
 
@@ -94,13 +86,15 @@ const CustomControls = (props: customVideoType) => {
     setPlay(true);
   };
 
+  const hiddenControls = () => {
+    setShowControl(false);
+    setTimeout(() => setShowControl(true), 2000);
+  };
+
   const handleBackButton = () => {
     if (videoStyle.height === screenWidth) {
       Orientation.lockToPortrait();
-      setVideoStyle({
-        height: screenHeight / 3,
-        width: '100%',
-      });
+      setVideoStyle(styles.initialVideoStyle);
     } else {
       navigation.goBack();
     }
@@ -127,7 +121,7 @@ const CustomControls = (props: customVideoType) => {
   return (
     <View style={videoStyle}>
       {fetching ? (
-        <VideoShimmer />
+        <VideoPlayerShimmer />
       ) : (
         <Video
           source={{uri: source}}
@@ -135,59 +129,72 @@ const CustomControls = (props: customVideoType) => {
           muted={false}
           controls={false}
           paused={!play}
-          resizeMode="stretch"
+          resizeMode="cover"
           ref={videoRef}
           onLoad={onLoadEnd}
           onProgress={onProgress}
           onEnd={onEnd}
+          playInBackground={false}
+          playWhenInactive={false}
         />
       )}
 
       {showControl && (
-        <View style={styles.controlOverPlay}>
-          <View style={styles.customControlContainer}>
-            <TouchableOpacity onPress={handleBackButton}>
-              <Image style={styles.backArrowStyle} source={images.backArrow} />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Image style={styles.menuStyle} source={images.menu} />
-            </TouchableOpacity>
-          </View>
-          <PlayerControls
-            onPlay={handlePlay}
-            onPause={handlePause}
-            playing={play}
-            skipForwards={handleSkipForward}
-            skipBackwards={handleSkipBackward}
-          />
-          <ProgressBar
-            currentTime={currentTime}
-            duration={duration > 0 ? duration : 0}
-            onSlideStart={handlePlayPause}
-            onSlideComplete={handlePlayPause}
-            onSlideCapture={onSeek}
-            containerStyle={{
-              bottom:
-                videoStyle.height === screenWidth
-                  ? normalize(30)
-                  : normalize(15),
-            }}
-          />
+        <React.Fragment>
+          <TouchableOpacity
+            onPress={hiddenControls}
+            style={styles.controlOverPlay}>
+            <View
+              style={[
+                styles.customControlContainer,
+                {top: currOrientation === 'PORTRAIT' ? -35 : -110},
+              ]}>
+              <TouchableOpacity onPress={handleBackButton}>
+                <Image
+                  style={styles.backArrowStyle}
+                  source={images.backArrow}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Image style={styles.menuStyle} source={images.menu} />
+              </TouchableOpacity>
+            </View>
+            <PlayerControls
+              onPlay={handlePlay}
+              onPause={handlePause}
+              playing={play}
+              skipForwards={handleSkipForward}
+              skipBackwards={handleSkipBackward}
+            />
+
+            <ProgressBar
+              currentTime={currentTime}
+              duration={duration > 0 ? duration : 0}
+              onSlideStart={handlePlayPause}
+              onSlideComplete={handlePlayPause}
+              onSlideCapture={onSeek}
+              containerStyle={{
+                bottom:
+                  videoStyle.height === screenWidth
+                    ? normalize(30)
+                    : normalize(15),
+              }}
+            />
+          </TouchableOpacity>
+
           <TouchableOpacity
             onPress={handleFullScreen}
             hitSlop={styles.fullScreenHitSlop}
             style={[
               styles.fullscreenButton,
               {
-                bottom:
-                  videoStyle.height === screenWidth
-                    ? normalize(-60)
-                    : normalize(-30),
+                right: currOrientation === 'PORTRAIT' ? 25 : 50,
+                bottom: currOrientation === 'PORTRAIT' ? 20 : 40,
               },
             ]}>
             <Image source={images.fullScreen} />
           </TouchableOpacity>
-        </View>
+        </React.Fragment>
       )}
     </View>
   );
@@ -197,11 +204,12 @@ export default React.memo(CustomControls);
 
 const styles = StyleSheet.create({
   container: {
-    // margin: normalize(10),
+    flex: 1,
   },
   videoContainer: {
     height: '100%',
     width: '100%',
+    flex: 1,
   },
   backArrowStyle: {
     height: normalize(20),
@@ -216,7 +224,14 @@ const styles = StyleSheet.create({
   customControlContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    margin: normalize(10),
+    marginHorizontal: normalize(10),
+    width: '90%',
+    alignSelf: 'center',
+  },
+  fullScreenVideoStyle: {
+    height: screenWidth,
+    width: screenHeight,
+    backgroundColor: 'black',
   },
   fullScreenHitSlop: {
     top: 10,
@@ -249,25 +264,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
   text: {
-    marginTop: 30,
-    marginHorizontal: 20,
-    fontSize: 15,
+    marginTop: normalize(30),
+    marginHorizontal: normalize(20),
+    fontSize: normalize(15),
     textAlign: 'justify',
   },
   fullscreenButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignSelf: 'flex-end',
-    alignItems: 'center',
-    paddingRight: '5%',
+    position: 'absolute',
+    zIndex: 1,
   },
   controlOverPlay: {
     position: 'absolute',
-    top: normalize(40),
+    top: 0,
     bottom: 0,
     left: 0,
     right: 0,
-    // backgroundColor: '#000000c4',
     justifyContent: 'center',
+    zIndex: 1,
   },
 });

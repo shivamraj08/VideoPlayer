@@ -5,10 +5,9 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
-  ScrollView,
 } from 'react-native';
 import React, {useState} from 'react';
-import {normalize, screenWidth, vh, vw} from '../../utils/dimension';
+import {normalize, vh, vw} from '../../utils/dimension';
 import {COLORS} from '../../utils/colors';
 import {images} from '../../utils/images';
 import {dummyImages} from '../../utils/imageData';
@@ -16,16 +15,12 @@ import CustomCard from '../../component/customCard';
 import {mediaJSON} from '../../utils/localData';
 import CustomControls from '../../component/customControls';
 import {STRINGS} from '../../utils/strings';
-import LinearGradient from 'react-native-linear-gradient';
-import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import Share from 'react-native-share';
-const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 function VideoPlayScreen({route}: any) {
   const {item} = route?.params;
   const [changeSource, setChangeSource] = useState(item.sources[0]);
   const [changeTitle, setchangeTitle] = useState(item.title);
   const [changeDescription, setchangeDescription] = useState(item.description);
-  const [loaded, setLoaded] = useState(false);
   let dataList = mediaJSON
     .filter(item => item.sources[0] !== changeSource)
     .slice(0, 5);
@@ -34,20 +29,23 @@ function VideoPlayScreen({route}: any) {
     const shareOptions = {
       message:
         "Order your next meal from FoodFinder App. I've already ordered more than 10 meals on it.",
-      // url: files.appLogo,
-      // urls: [files.image1, files.image2]
     };
 
     try {
       const ShareResponse = await Share.open(shareOptions);
     } catch (error) {}
   };
+
+  /**
+   *
+   * @returns return emoji reaction
+   */
   const handleMapData = () => {
     return dummyImages.map((item, index) => {
       return (
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={item?.text == 'Share' ? myCustomShare : null}
+          onPress={item?.text == 'Share' ? myCustomShare : () => {}}
           key={index}
           style={styles.reactionContainer}>
           <Image source={item.image} style={styles.likeImageStyle} />
@@ -57,10 +55,20 @@ function VideoPlayScreen({route}: any) {
     });
   };
 
+  /**
+   *
+   * @param item
+   * @returns return keys
+   */
   const onKeyExtract = (item: any) => {
     return item.id.toString();
   };
 
+  /**
+   *
+   * @param param0
+   * @returns return a render flatlist
+   */
   const onrender = ({item}: any) => {
     const handleOnPress = () => {
       setChangeSource(item.sources[0]);
@@ -68,13 +76,7 @@ function VideoPlayScreen({route}: any) {
       setchangeDescription(item.description);
     };
     return (
-      // {loaded?null:()}
       <View style={styles.renderContainer}>
-        {/* <ShimmerPlaceholder
-          style={{
-            height: normalize(100),
-            width: normalize(100),
-          }}></ShimmerPlaceholder> */}
         <CustomCard
           onPress={handleOnPress}
           title={item.title}
@@ -82,7 +84,6 @@ function VideoPlayScreen({route}: any) {
           sources={item.sources}
           thumb={item.thumb}
           subtitle={item.subtitle}
-          time={item.time}
         />
       </View>
     );
@@ -91,12 +92,14 @@ function VideoPlayScreen({route}: any) {
   const detailsComponent = () => {
     return (
       <>
-        <View style={styles.headerView}>
+        <View style={styles.headerContainer}>
           <Text style={styles.headerTextstyle}>{changeTitle}</Text>
-          <View style={styles.numberOfView}>
-            <Text style={styles.noViewText}>{STRINGS.LABEL.K_VIEWS}</Text>
-            <Text style={styles.dayTextstyle}>{STRINGS.LABEL.DAYS_AGO}</Text>
+          <View style={styles.numberOfViewsContainer}>
+            <Text>{STRINGS.LABEL.K_VIEWS}</Text>
+            <Text>{'·'}</Text>
+            <Text>{STRINGS.LABEL.DAYS_AGO}</Text>
           </View>
+
           <Text style={styles.descriptionTextstyle} numberOfLines={3}>
             {changeDescription}
           </Text>
@@ -116,12 +119,10 @@ function VideoPlayScreen({route}: any) {
             <Text style={styles.buttonSubscribe}>{STRINGS.LABEL.SUBCRIBE}</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.commentsView}>
+        <View style={styles.commentContainer}>
           <View style={styles.commentsInner}>
-            {/* <View style={styles.noOfComments}> */}
             <Text style={styles.commentsText}>{STRINGS.LABEL.COMMENTS}</Text>
-            <Text style={{marginRight: 220}}>{STRINGS.NUMBER[32]}</Text>
-            {/* </View> */}
+            <Text style={styles.countComment}>{STRINGS.NUMBER.THIRTY_TWO}</Text>
             <Image source={images.expand} />
           </View>
           <View style={styles.userCommentView}>
@@ -132,6 +133,9 @@ function VideoPlayScreen({route}: any) {
               </Text>
             </View>
           </View>
+        </View>
+        <View style={styles.similarTextContainer}>
+          <Text style={styles.similarText}>{STRINGS.LABEL.SIMILAR_VIDEOS}</Text>
         </View>
       </>
     );
@@ -145,6 +149,8 @@ function VideoPlayScreen({route}: any) {
         renderItem={onrender}
         ListHeaderComponent={detailsComponent}
         keyExtractor={onKeyExtract}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
       />
     </View>
   );
@@ -155,12 +161,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  numberOfViews: {
-    flexDirection: 'row',
-    marginTop: normalize(6),
-    width: '55%',
-    justifyContent: 'space-between',
-    color: COLORS.GREY,
+  similarText: {
+    fontSize: normalize(14),
+    fontWeight: '800',
+  },
+  similarTextContainer: {
+    marginTop: normalize(30),
+    marginHorizontal: normalize(20),
   },
   likeImageStyle: {
     height: normalize(25),
@@ -168,16 +175,12 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     tintColor: COLORS.GREY,
   },
-  likeContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: normalize(20),
-    width: '80%',
-    margin: normalize(30),
+  countComment: {
+    marginRight: '58%',
   },
   descriptionTextstyle: {
     marginTop: normalize(10),
-    fontSize: 14,
+    fontSize: normalize(12),
   },
   renderContainer: {
     flex: 1,
@@ -198,21 +201,23 @@ const styles = StyleSheet.create({
   channelContainer: {
     marginRight: normalize(80),
   },
-  headerView: {
+  headerContainer: {
     marginHorizontal: normalize(20),
     marginTop: normalize(20),
   },
   headerTextstyle: {
-    fontSize: 16,
+    fontSize: normalize(16),
     fontFamily: 'Poppins-Bold',
     fontWeight: '700',
   },
-  numberOfView: {
+  numberOfViewsContainer: {
     flexDirection: 'row',
-    marginTop: normalize(20),
+    marginTop: normalize(6),
+    width: '49%',
+    justifyContent: 'space-evenly',
   },
   noViewText: {
-    fontSize: 14,
+    fontSize: normalize(14),
     fontFamily: 'Poppins-Regular',
     color: COLORS.BLACK,
   },
@@ -223,12 +228,6 @@ const styles = StyleSheet.create({
     fontSize: normalize(12),
     marginTop: normalize(5),
     color: COLORS.GREY,
-  },
-  userImageStyle: {
-    height: vw(30),
-    width: vw(30),
-    resizeMode: 'cover',
-    borderRadius: normalize(20),
   },
   userChannelImage: {
     height: vw(40),
@@ -246,16 +245,16 @@ const styles = StyleSheet.create({
   buttonSubscribe: {
     color: COLORS.WHITE,
     textAlign: 'center',
-    justifyContent: 'center',
     fontWeight: '700',
-    marginTop: normalize(5),
     fontSize: normalize(10),
   },
   subscribeTouchable: {
     backgroundColor: COLORS.AQUA,
     width: '30%',
     borderRadius: normalize(20),
-    height: normalize(25),
+    height: normalize(27),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   mapViewData: {
     flexDirection: 'row',
@@ -274,7 +273,7 @@ const styles = StyleSheet.create({
     height: vh(90),
     marginTop: vh(20),
   },
-  commentsView: {
+  commentContainer: {
     paddingHorizontal: normalize(20),
     paddingVertical: normalize(14),
     borderBottomWidth: 0.5,
@@ -285,14 +284,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: normalize(30),
-  },
-  noOfComments: {
-    flexDirection: 'row',
-    // justifyContent: 'space-between',
-    // margin: normalize(15),
-  },
-  commentsTxt: {
-    marginLeft: normalize(20),
   },
   userCommentView: {
     flexDirection: 'row',
@@ -314,7 +305,7 @@ const styles = StyleSheet.create({
   },
   commentUserText: {
     color: COLORS.GREY,
-    fontSize: 14,
+    fontSize: normalize(14),
   },
   commentsText: {
     fontSize: normalize(14),

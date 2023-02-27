@@ -9,11 +9,11 @@ import {images} from '../utils/images';
  * @returns play pause button Skip Forward Button handle skip Backwards
  */
 const PlayerControls = (props: {
-  playing: any;
-  onPlay: any;
-  onPause: any;
-  skipForwards: any;
-  skipBackwards: any;
+  playing?: any;
+  onPlay?: any;
+  onPause?: any;
+  skipForwards?: any;
+  skipBackwards?: any;
 }) => {
   const {playing, onPlay, onPause, skipForwards, skipBackwards} = props;
 
@@ -39,14 +39,16 @@ const PlayerControls = (props: {
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingHorizontal: 5,
-    marginTop: '7%',
+    paddingHorizontal: normalize(5),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-evenly',
+    margin: normalize(10),
+    alignContent: 'center',
+    marginBottom: normalize(30),
   },
   touchable: {
-    padding: 5,
+    padding: normalize(5),
   },
   touchableDisabled: {
     opacity: 0.3,
