@@ -46,7 +46,7 @@ function VideoPlayScreen({route}: any) {
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={item?.text == 'Share' ? myCustomShare : () => {}}
-          key={index}
+          key={item?.id}
           style={styles.reactionContainer}>
           <Image source={item.image} style={styles.likeImageStyle} />
           <Text style={styles.iconTextstyle}>{item.text}</Text>
@@ -61,7 +61,7 @@ function VideoPlayScreen({route}: any) {
    * @returns return keys
    */
   const onKeyExtract = (item: any) => {
-    return item.id.toString();
+    return item?.id?.toString();
   };
 
   /**
@@ -84,6 +84,7 @@ function VideoPlayScreen({route}: any) {
           sources={item.sources}
           thumb={item.thumb}
           subtitle={item.subtitle}
+          duration={item.duration}
         />
       </View>
     );
@@ -95,9 +96,9 @@ function VideoPlayScreen({route}: any) {
         <View style={styles.headerContainer}>
           <Text style={styles.headerTextstyle}>{changeTitle}</Text>
           <View style={styles.numberOfViewsContainer}>
-            <Text>{STRINGS.LABEL.K_VIEWS}</Text>
-            <Text>{'·'}</Text>
-            <Text>{STRINGS.LABEL.DAYS_AGO}</Text>
+            <Text style={styles.viewTextstyle}>{STRINGS.LABEL.K_VIEWS}</Text>
+            <Text style={styles.viewTextstyle}>{'   \u2022   '}</Text>
+            <Text style={styles.viewTextstyle}>{STRINGS.LABEL.DAYS_AGO}</Text>
           </View>
 
           <Text style={styles.descriptionTextstyle} numberOfLines={3}>
@@ -162,8 +163,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   similarText: {
+    fontSize: normalize(16),
+    fontWeight: '700',
+    color: COLORS.BLACK,
+  },
+  viewTextstyle: {
+    color: COLORS.GREY,
     fontSize: normalize(14),
-    fontWeight: '800',
   },
   similarTextContainer: {
     marginTop: normalize(30),
@@ -177,10 +183,12 @@ const styles = StyleSheet.create({
   },
   countComment: {
     marginRight: '58%',
+    color: COLORS.GREY,
   },
   descriptionTextstyle: {
     marginTop: normalize(10),
     fontSize: normalize(12),
+    color: COLORS.BLACK,
   },
   renderContainer: {
     flex: 1,
@@ -209,12 +217,12 @@ const styles = StyleSheet.create({
     fontSize: normalize(16),
     fontFamily: 'Poppins-Bold',
     fontWeight: '700',
+    color: COLORS.BLACK,
   },
   numberOfViewsContainer: {
     flexDirection: 'row',
     marginTop: normalize(6),
     width: '49%',
-    justifyContent: 'space-evenly',
   },
   noViewText: {
     fontSize: normalize(14),

@@ -12,10 +12,11 @@ interface customCardType {
   thumb: any;
   subtitle: any;
   onPress: any;
+  duration: any;
 }
 
 function CustomCard(props: customCardType) {
-  const {title, thumb, subtitle, onPress} = props;
+  const {title, thumb, subtitle, onPress, duration} = props;
 
   return (
     <View style={styles.container}>
@@ -26,15 +27,15 @@ function CustomCard(props: customCardType) {
           resizeMode="cover"
         />
         <View style={styles.durationVideoView}>
-          <Text style={styles.timeText}>{STRINGS.NUMBER.DURATION}</Text>
+          <Text style={styles.timeText}>{duration}</Text>
         </View>
         <Image source={images.videoPlay} style={styles.playImage} />
         <View style={styles.videoDescriptionView}>
           <Text style={styles.titleTextstyle}>{title}</Text>
           <View style={styles.numberOfViewsContainer}>
-            <Text>{STRINGS.LABEL.K_VIEWS}</Text>
-            <Text>{'·'}</Text>
-            <Text>{STRINGS.LABEL.DAYS_AGO}</Text>
+            <Text style={styles.viewTextstyle}>{STRINGS.LABEL.K_VIEWS}</Text>
+            <Text style={styles.viewTextstyle}>{'   \u2022   '}</Text>
+            <Text style={styles.viewTextstyle}>{STRINGS.LABEL.DAYS_AGO}</Text>
           </View>
           <View style={styles.userChannelView}>
             <Image source={images.womenImage} style={styles.userImageStyle} />
@@ -61,15 +62,19 @@ const styles = StyleSheet.create({
   videoDescriptionView: {
     padding: normalize(12),
   },
+  viewTextstyle: {
+    color: COLORS.GREY,
+    fontSize: normalize(14),
+  },
   titleTextstyle: {
     fontSize: normalize(16),
     fontWeight: '600',
+    color: COLORS.BLACK,
   },
   numberOfViewsContainer: {
     flexDirection: 'row',
     marginTop: normalize(6),
     width: '49%',
-    justifyContent: 'space-around',
   },
   userChannelView: {
     flexDirection: 'row',
@@ -96,7 +101,7 @@ const styles = StyleSheet.create({
   },
   durationVideoView: {
     position: 'absolute',
-    backgroundColor: '#161616',
+    backgroundColor: COLORS.BROWN,
     padding: normalize(6),
     width: normalize(60),
     height: normalize(30),

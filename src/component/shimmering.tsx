@@ -42,9 +42,9 @@ const VideoPlayerShimmer = () => {
 /**
  *
  * @returns Custom Card Shimmer
+ * Handle animation
  */
 const CustomShimmer = () => {
-  // Handle animation
   const videoContainerRef = React.useRef<any>();
   const textRef = React.useRef<any>();
 
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   videoImageStyle: {
-    width: windowWidth - 40,
+    width: windowWidth - normalize(40),
     height: windowHeight / 5,
     marginHorizontal: normalize(20),
   },
@@ -111,21 +111,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleShimmer: {
-    width: windowWidth - 80,
-    height: 20,
+    width: windowWidth - normalize(80),
+    height: normalize(20),
     marginHorizontal: normalize(20),
     marginTop: normalize(20),
     borderRadius: normalize(10),
   },
   viewShimmer: {
-    width: 40,
-    height: 40,
+    width: normalize(40),
+    height: normalize(40),
     marginRight: normalize(20),
     marginTop: normalize(20),
     borderRadius: normalize(60),
   },
   customShimmerContainer: {
-    width: windowWidth - windowWidth * 0.1,
+    width: windowWidth * 0.9,
     backgroundColor: COLORS.GREY,
     justifyContent: 'center',
     alignItems: 'center',
@@ -134,8 +134,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   channelShimmer: {
-    width: windowWidth - windowWidth * 0.37,
-    height: 20,
+    width: windowWidth * 0.63,
+    height: normalize(20),
     marginTop: normalize(20),
     borderRadius: normalize(10),
   },

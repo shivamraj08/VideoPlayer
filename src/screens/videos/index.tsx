@@ -17,7 +17,7 @@ const VideosList = () => {
   }, []);
 
   const onKeyExtract = (item: any) => {
-    return item.id.toString();
+    return item?.id?.toString();
   };
 
   const _EndReached = () => {
@@ -35,6 +35,7 @@ const VideosList = () => {
     return mediaJSON.length != page.length ? <ActivityIndicator /> : null;
   };
   const renderItems = ({item}: any) => {
+    console.log('items', item);
     const onVideoPress = () => {
       navigation.navigate('VideoPlayscreen', {
         item,
@@ -52,6 +53,7 @@ const VideosList = () => {
             sources={item.sources}
             thumb={item.thumb}
             subtitle={item.subtitle}
+            duration={'5:40'}
           />
         )}
       </View>
@@ -73,7 +75,7 @@ const VideosList = () => {
   );
 };
 
-export default VideosList;
+export default React.memo(VideosList);
 
 const styles = StyleSheet.create({
   container: {

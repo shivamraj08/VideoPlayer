@@ -6,4 +6,5 @@ export const COLORS = {
   GREY: '#606060',
   LIGHT_AQUA: '#34dbeb',
   POWDER_BLUE: '#e8f0f8',
+  BROWN: '#161616',
 };

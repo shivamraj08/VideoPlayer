@@ -147,7 +147,12 @@ const CustomControls = (props: customVideoType) => {
             <View
               style={[
                 styles.customControlContainer,
-                {top: currOrientation === 'PORTRAIT' ? -35 : -110},
+                {
+                  top:
+                    currOrientation === 'PORTRAIT'
+                      ? normalize(-35)
+                      : normalize(-110),
+                },
               ]}>
               <TouchableOpacity onPress={handleBackButton}>
                 <Image
@@ -188,8 +193,14 @@ const CustomControls = (props: customVideoType) => {
             style={[
               styles.fullscreenButton,
               {
-                right: currOrientation === 'PORTRAIT' ? 25 : 50,
-                bottom: currOrientation === 'PORTRAIT' ? 20 : 40,
+                right:
+                  currOrientation === 'PORTRAIT'
+                    ? normalize(25)
+                    : normalize(50),
+                bottom:
+                  currOrientation === 'PORTRAIT'
+                    ? normalize(20)
+                    : normalize(40),
               },
             ]}>
             <Image source={images.fullScreen} />

@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   },
   timeLeft: {
     flex: 1,
-    fontSize: 16,
+    fontSize: normalize(16),
     color: COLORS.WHITE,
   },
 });

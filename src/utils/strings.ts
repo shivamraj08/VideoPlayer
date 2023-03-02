@@ -14,4 +14,12 @@ export const STRINGS = {
     THIRTY_TWO: '32',
     DURATION: '5:50',
   },
+  SCREEN_NAME: {
+    FAVORITE: 'Favorites',
+    TOPTAB: 'TopTab',
+    VIDEO_PLAYER_SCREEN: 'VideoPlayscreen',
+    CHANNELS: 'Channels',
+    VIDEOS: 'Videos',
+    ARTICLES: 'Articles',
+  },
 };
